@@ -1,3 +1,10 @@
+# [0.1.0](https://github.com/maxmilhas/winston-context-logger-open-telemetry/compare/v0.0.2...v0.1.0) (2022-11-09)
+
+
+### Features
+
+* adding initializer for scope ([cea3dc4](https://github.com/maxmilhas/winston-context-logger-open-telemetry/commit/cea3dc4a1e38d9f2551b9b1f67a08806e3b0ce61))
+
 ## [0.0.2](https://github.com/maxmilhas/winston-context-logger-open-telemetry/compare/v0.0.1...v0.0.2) (2022-11-08)
 
 
