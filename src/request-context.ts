@@ -1,14 +1,9 @@
-import { AsyncHooksContextManager } from '@opentelemetry/context-async-hooks';
 import * as api from '@opentelemetry/api';
 import { v4 } from 'uuid';
 import { packageInfo } from './package-info';
 import { ContextInfoProvider } from 'winston-context-logger';
 
 const contextSymbol = Symbol('Context');
-const contextManager = new AsyncHooksContextManager();
-contextManager.enable();
-api.context.setGlobalContextManager(contextManager);
-
 export class RequestContext {
 	readonly privateMeta: {
 		[key: symbol]: object;
@@ -20,6 +15,7 @@ export class RequestContext {
 		routine: string,
 		correlationId: string | undefined,
 		callback: () => Promise<void>,
+		initialize?: () => void,
 	) {
 		const context = new RequestContext(correlationId || v4());
 		return api.context.with(
@@ -27,6 +23,7 @@ export class RequestContext {
 			async () => {
 				const span = api.trace.getTracer(packageInfo.name).startSpan(routine);
 				try {
+					initialize?.();
 					await callback();
 				} finally {
 					span.end();
