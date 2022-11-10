@@ -1,3 +1,10 @@
+## [0.1.4](https://github.com/maxmilhas/winston-context-logger-open-telemetry/compare/v0.1.3...v0.1.4) (2022-11-10)
+
+
+### Bug Fixes
+
+* adding routine property ([2b49d25](https://github.com/maxmilhas/winston-context-logger-open-telemetry/commit/2b49d2505ba2040cb28207c0e3c42d048e7a637d))
+
 ## [0.1.3](https://github.com/maxmilhas/winston-context-logger-open-telemetry/compare/v0.1.2...v0.1.3) (2022-11-10)
 
 
