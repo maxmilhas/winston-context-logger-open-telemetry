@@ -90,6 +90,10 @@ export class OpenTelemetryContextProvider<T extends object>
 		return this.currentContext().correlationId;
 	}
 
+	get routine() {
+		return this.currentContext().routine;
+	}
+
 	getContextInfo() {
 		return this.currentContext().privateMeta[loggerContextSymbol];
 	}
