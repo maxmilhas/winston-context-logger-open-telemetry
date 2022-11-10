@@ -2,7 +2,9 @@ import * as api from '@opentelemetry/api';
 import { v4 } from 'uuid';
 import { packageInfo } from './package-info';
 import { ContextInfoProvider } from 'winston-context-logger';
+import * as nodeCleanup from 'node-cleanup';
 
+const onContextEndList: Array<() => void> = [];
 const contextSymbol = Symbol('Context');
 export class RequestContext {
 	readonly privateMeta: {
@@ -27,9 +29,20 @@ export class RequestContext {
 					await callback();
 				} finally {
 					span.end();
+					this.flush();
 				}
 			},
 		);
+	}
+
+	static flush() {
+		onContextEndList.forEach((callback) => {
+			try {
+				callback();
+			} catch (error) {
+				console.error(`Error when calling context end callback ${error.stack}`);
+			}
+		});
 	}
 }
 const loggerContextSymbol = Symbol('CoggerContext');
@@ -56,4 +69,10 @@ export class OpenTelemetryContextProvider<T extends object>
 	setContextInfo(value: object) {
 		this.currentContext().privateMeta[loggerContextSymbol] = value;
 	}
+
+	onContextEnd(callback: () => void): void {
+		onContextEndList.push(callback);
+	}
 }
+
+nodeCleanup(RequestContext.flush.bind(RequestContext));

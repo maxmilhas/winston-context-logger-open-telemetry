@@ -76,6 +76,7 @@
   "devDependencies": {
     "@codibre/confs": "^1.1.2",
     "@types/jest": "^27.4.1",
+    "@types/node-cleanup": "^2.1.2",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.28.0",
     "@typescript-eslint/parser": "^5.28.0",
@@ -95,12 +96,13 @@
     "typedoc": "^0.22.17",
     "typedoc-plugin-markdown": "^3.12.1",
     "typescript": "^4.5.2",
-    "winston-context-logger": "^0.1.1"
+    "winston-context-logger": "^0.1.6"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.2.0",
     "@opentelemetry/context-async-hooks": "^1.7.0",
     "@types/read-pkg": "^4.0.0",
+    "node-cleanup": "^2.1.2",
     "read-pkg": "^4.0.1",
     "uuid": "^9.0.0"
   }
