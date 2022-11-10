@@ -4,41 +4,60 @@ import { packageInfo } from './package-info';
 import { ContextInfoProvider } from 'winston-context-logger';
 import * as nodeCleanup from 'node-cleanup';
 
-const onContextEndList: Array<() => void> = [];
+const onContextEndList: Array<(routine?: string) => void> = [];
 const contextSymbol = Symbol('Context');
+
 export class RequestContext {
 	readonly privateMeta: {
 		[key: symbol]: object;
 	} = {};
 
-	constructor(public readonly correlationId: string) {}
+	constructor(
+		public readonly correlationId: string,
+		public readonly routine: string,
+	) {}
 
-	static setContext(
+	static setContext<T>(
 		routine: string,
 		correlationId: string | undefined,
-		callback: () => Promise<void> | void,
-		initialize?: () => void,
+		callback: () => Promise<T> | T,
+		initialize?: () => Promise<void> | void,
 	) {
-		const context = new RequestContext(correlationId || v4());
+		const context = new RequestContext(correlationId || v4(), routine);
 		return api.context.with(
 			api.context.active().setValue(contextSymbol, context),
 			async () => {
 				const span = api.trace.getTracer(packageInfo.name).startSpan(routine);
 				try {
-					initialize?.();
-					await callback();
+					await initialize?.();
+					return await callback();
 				} finally {
 					span.end();
-					this.flush();
+					this.flush(routine);
 				}
 			},
 		);
 	}
 
-	static flush() {
+	subContext<T>(
+		subRoutine: string,
+		callback: () => Promise<T> | T,
+		initialize?: () => Promise<void> | void,
+	) {
+		return RequestContext.setContext(
+			`${this.routine}.${subRoutine}`,
+			this.correlationId,
+			callback,
+			initialize,
+		);
+	}
+
+	static flush(): void;
+	static flush(routine: string): void;
+	static flush(routine?: string) {
 		onContextEndList.forEach((callback) => {
 			try {
-				callback();
+				callback(routine);
 			} catch (error) {
 				console.error(`Error when calling context end callback ${error.stack}`);
 			}
@@ -50,13 +69,21 @@ const loggerContextSymbol = Symbol('CoggerContext');
 export class OpenTelemetryContextProvider<T extends object>
 	implements ContextInfoProvider<T>
 {
-	private readonly rootContext = new RequestContext('root');
+	private readonly rootContext = new RequestContext('root', 'root');
 
 	currentContext() {
 		return (
 			(api.context.active().getValue(contextSymbol) as RequestContext) ||
 			this.rootContext
 		);
+	}
+
+	subContext(
+		subRoutine: string,
+		callback: () => Promise<T> | T,
+		initialize?: () => Promise<void> | void,
+	) {
+		return this.currentContext().subContext(subRoutine, callback, initialize);
 	}
 
 	get correlationId() {
