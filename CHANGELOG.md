@@ -1,3 +1,10 @@
+## [0.1.6](https://github.com/maxmilhas/winston-context-logger-open-telemetry/compare/v0.1.5...v0.1.6) (2022-11-10)
+
+
+### Bug Fixes
+
+* unifying subContext method ([bab7de9](https://github.com/maxmilhas/winston-context-logger-open-telemetry/commit/bab7de9462a4ac8f6ffb6c0df92f922ded1ac402))
+
 ## [0.1.5](https://github.com/maxmilhas/winston-context-logger-open-telemetry/compare/v0.1.4...v0.1.5) (2022-11-10)
 
 
