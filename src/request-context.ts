@@ -65,17 +65,28 @@ export class RequestContext {
 	}
 }
 const loggerContextSymbol = Symbol('CoggerContext');
+const rootContext = new RequestContext('root', 'root');
 
 export class OpenTelemetryContextProvider<T extends object>
 	implements ContextInfoProvider<T>
 {
-	private readonly rootContext = new RequestContext('root', 'root');
-
-	currentContext() {
+	static currentContext() {
 		return (
 			(api.context.active().getValue(contextSymbol) as RequestContext) ||
-			this.rootContext
+			rootContext
 		);
+	}
+
+	currentContext() {
+		return OpenTelemetryContextProvider.currentContext();
+	}
+
+	static subContext<T>(
+		subRoutine: string,
+		callback: () => Promise<T> | T,
+		initialize?: () => Promise<void> | void,
+	) {
+		return this.currentContext().subContext(subRoutine, callback, initialize);
 	}
 
 	subContext(
@@ -105,5 +116,7 @@ export class OpenTelemetryContextProvider<T extends object>
 		onContextEndList.push(callback);
 	}
 }
+
+export const openTelemetryContextProvider = new OpenTelemetryContextProvider();
 
 nodeCleanup(RequestContext.flush.bind(RequestContext));
