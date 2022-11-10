@@ -16,7 +16,7 @@ export class RequestContext {
 	static setContext(
 		routine: string,
 		correlationId: string | undefined,
-		callback: () => Promise<void>,
+		callback: () => Promise<void> | void,
 		initialize?: () => void,
 	) {
 		const context = new RequestContext(correlationId || v4());
