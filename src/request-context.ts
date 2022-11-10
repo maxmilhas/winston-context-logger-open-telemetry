@@ -89,12 +89,16 @@ export class OpenTelemetryContextProvider<T extends object>
 		return this.currentContext().subContext(subRoutine, callback, initialize);
 	}
 
-	subContext(
+	subContext<R>(
 		subRoutine: string,
-		callback: () => Promise<T> | T,
+		callback: () => Promise<R> | R,
 		initialize?: () => Promise<void> | void,
 	) {
-		return this.currentContext().subContext(subRoutine, callback, initialize);
+		return OpenTelemetryContextProvider.subContext(
+			subRoutine,
+			callback,
+			initialize,
+		);
 	}
 
 	get correlationId() {
