@@ -1,3 +1,10 @@
+## [0.1.1](https://github.com/maxmilhas/winston-context-logger-open-telemetry/compare/v0.1.0...v0.1.1) (2022-11-10)
+
+
+### Bug Fixes
+
+* adding onContextEnd support ([51953ee](https://github.com/maxmilhas/winston-context-logger-open-telemetry/commit/51953ee28e47de8e90d56eeb2c85dd8c5ec7ac06))
+
 # [0.1.0](https://github.com/maxmilhas/winston-context-logger-open-telemetry/compare/v0.0.2...v0.1.0) (2022-11-09)
 
 
